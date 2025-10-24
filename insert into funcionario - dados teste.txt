@@ -1,0 +1,54 @@
+insert into funcionario 
+(nome, cpf, cargo, email, telefone, data_contratacao)
+values
+('Ana Paula', '23456789123', 'Gerente', 'ana.paula@hotmail.com', '22988776655', '2021-06-15'),
+('Ricardo Mendes', '34567891234', 'Camareiro', 'ricardo.mendes@outlook.com', '22977665544', '2023-01-20'),
+('Fernanda Lima', '45678912345', 'Cozinheira', 'fernanda.lima@gmail.com', '22966554433', '2020-11-05'),
+('Bruno Souza', '56789123456', 'Recepcionista', 'bruno_souza@hotmail.com', '22955443322', '2022-03-12'),
+('Juliana Costa', '67891234567', 'Manobrista', 'juliana.costa@outlook.com', '22944332211', '2023-08-01'),
+('Paulo Henrique', '78912345678', 'Segurança', 'paulo.henrique@gmail.com', '22933221100', '2021-09-10'),
+('Camila Rodrigues', '89123456789', 'Governanta', 'camila.rodrigues@hotmail.com', '22922110099', '2022-07-22'),
+('Mateus Oliveira', '91234567890', 'Cozinheiro', 'mateus.oliveira@outlook.com', '22911009988', '2020-12-03'),
+('Camila Santos', '10234567891', 'Recepcionista', 'patricia.santos@gmail.com', '22900998877', '2023-02-14'),
+('Ricardo Almeida', '11234567892', 'Manobrista', 'ricardo.almeida@hotmail.com', '22999887766', '2022-05-19'),
+('Carla Pereira', '12234567893', 'Camareira', 'carla.pereira@outlook.com', '22988776655', '2021-11-30'),
+('Thiago Martins', '13234567894', 'Gerente', 'thiago.martins@gmail.com', '22977665544', '2019-04-25'),
+('Sofia Nunes', '14234567895', 'Analista de Segurança', default, '22966554433', '2020-08-18'),
+('Lucas Fernandes', '15234567896', 'Recepcionista', 'lucas.fernandes@outlook.com', '22955443322', '2021-03-05'),
+('Lucas Martins', '13234567894', 'Gerente', 'thiago55.martins@gmail.com', '22977655544', '2020-08-25');
+;
+
+select * 
+from funcionario;
+
+select *
+from funcionario 
+where cargo = 'Gerente';
+
+select * 
+from funcionario 
+where data_desligamento is not null;
+
+select nome, cpf, cargo, data_contratacao, data_desligamento
+from funcionario 
+where data_contratacao > '2023-01-01';
+
+select COUNT(*) AS funcionarios_ativos 
+from funcionario 
+WHERE data_desligamento IS NULL;
+
+select 
+nome, 
+cargo, 
+DATEDIFF(CURDATE(), data_contratacao) AS dias_na_empresa
+from funcionario
+WHERE data_desligamento IS NULL;
+
+SELECT 
+    f.id_funcionario,
+    f.nome,
+    COUNT(sa.id_servico) AS total_servicos
+FROM funcionario f
+JOIN servico_adicional sa ON f.id_funcionario = sa.id_funcionario
+GROUP BY f.id_funcionario, f.nome
+ORDER BY total_servicos DESC;

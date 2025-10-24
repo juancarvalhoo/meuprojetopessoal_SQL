@@ -1,0 +1,163 @@
+SELECT 
+    N.nome,
+    T.tipo_serviço
+FROM hospede AS N
+INNER JOIN servico_adicional AS T
+    ON N.id_hospede = T.id_hospede;
+    
+--------------------------------------------------
+
+DATA DE CHECK_IN E CHECK_OUT + HOSPEDE 
+
+SELECT DISTINCT
+    h.nome AS hospede,
+    r.id_reserva,
+    r.check_in,
+    r.check_out,
+    q.tipo AS tipo_quarto
+FROM hospede AS h
+INNER JOIN reserva AS r
+    ON h.id_hospede = r.id_hospede
+INNER JOIN quarto AS q
+    ON q.id_quarto = r.id_quarto;
+
+-----------------------------------------------
+    
+TIPO DE QUARTO + HOSPEDE 
+
+SELECT 
+    r.id_reserva,
+    h.nome AS hospede,
+    q.numero,
+    q.tipo
+FROM reserva AS r
+INNER JOIN hospede AS h
+    ON r.id_hospede = h.id_hospede
+INNER JOIN quarto AS q
+    ON r.id_quarto = q.id_quarto;
+
+SELECT 
+    h.nome AS hospede,
+    sa.tipo_serviço AS servico_adicional,
+    sa.preco
+FROM hospede AS h
+LEFT JOIN servico_adicional AS sa
+    ON h.id_hospede = sa.id_hospede;
+
+
+--------------------------------------------------
+    
+PAGAMENTO + RESERVA + SERVICOS
+
+SELECT DISTINCT 
+    h.nome AS hospede,
+    r.id_reserva,
+    q.numero,
+    q.tipo,
+    q.preço_diaria
+    FROM hospede AS h
+LEFT JOIN reserva AS r
+    ON h.id_hospede = r.id_hospede
+LEFT JOIN quarto AS q
+    ON r.id_quarto = q.id_quarto
+LEFT JOIN servico_adicional AS sa
+    ON h.id_hospede = sa.id_hospede
+LEFT JOIN pagamento AS p
+    ON r.id_reserva = p.id_reserva;
+
+
+---------------------------------------------------
+    
+AVALCIAÇÕES + PAGAMENTOS 
+
+    SELECT distinct
+    r.id_reserva,
+    h.nome AS nome_hospede,
+	q.numero,
+    q.tipo,
+    r.check_in,
+    r.check_out,
+    p.valor,
+    a.nota,
+    a.comentario
+FROM reserva r
+
+JOIN hospede h 
+ON r.id_hospede = h.id_hospede
+
+JOIN quarto q 
+ON r.id_quarto = q.id_quarto
+
+LEFT JOIN pagamento p 
+ON r.id_reserva = p.id_reserva
+
+LEFT JOIN avaliacao a 
+ON r.id_reserva = a.id_reserva;
+
+
+----------------------------------------------------
+QAUTIDADE DE SERVIÇOS + HOSPEDE 
+
+SELECT 
+    h.nome AS hospede,
+    COUNT(sa.id_servico) AS total_servicos,
+    SUM(p.valor) AS total_pago
+FROM hospede h
+LEFT JOIN servico_adicional sa ON h.id_hospede = sa.id_hospede
+LEFT JOIN reserva r ON h.id_hospede = r.id_hospede
+LEFT JOIN pagamento p ON r.id_reserva = p.id_reserva
+GROUP BY h.nome;
+
+-------------------------------------------------
+
+SERVIÇOS + HOSPEDES 
+
+SELECT 
+    h.nome AS hospede,
+    r.id_reserva,
+    r.check_in,
+    r.check_out,
+    q.numero AS numero_quarto,
+    q.tipo AS tipo_quarto,
+    GROUP_CONCAT(sa.tipo_serviço SEPARATOR ', ') AS servicos,
+    SUM(sa.preco) AS total_serviço,
+    p.valor AS pagamento_valor,
+    p.status AS pagamento_status,
+    a.nota,
+    a.comentario
+FROM hospede h
+LEFT JOIN reserva r ON h.id_hospede = r.id_hospede
+LEFT JOIN quarto q ON r.id_quarto = q.id_quarto
+LEFT JOIN servico_adicional sa ON h.id_hospede = sa.id_hospede
+LEFT JOIN pagamento p ON r.id_reserva = p.id_reserva
+LEFT JOIN avaliacao a ON r.id_reserva = a.id_reserva
+GROUP BY 
+    h.nome, r.id_reserva, r.check_in, r.check_out, q.numero, q.tipo, 
+    p.valor, p.status, a.nota, a.comentario;
+
+-------------------------------------------------
+
+VALOR TOTAL DO HOSPEDE 
+
+SELECT 
+    h.nome AS hospede,
+    r.id_reserva,
+    r.check_in,
+    r.check_out,
+    q.numero AS quarto,
+    q.tipo AS tipo_quarto,
+    q.preço_diaria,
+    DATEDIFF(r.check_out, r.check_in) AS dias_hospedagem,
+    (q.preço_diaria * DATEDIFF(r.check_out, r.check_in)) AS valor_diaria_total,
+    IFNULL(SUM(sa.preco), 0) AS total_servicos_adicionais,
+    (q.preço_diaria * DATEDIFF(r.check_out, r.check_in) + IFNULL(SUM(sa.preco), 0)) AS valor_total_hospedagem
+FROM hospede h
+LEFT JOIN reserva r ON h.id_hospede = r.id_hospede
+LEFT JOIN quarto q ON r.id_quarto = q.id_quarto
+LEFT JOIN servico_adicional sa ON h.id_hospede = sa.id_hospede
+GROUP BY r.id_reserva, h.nome, r.check_in, r.check_out, q.numero, q.tipo, q.preço_diaria
+ORDER BY r.check_in;
+
+
+
+

@@ -1,0 +1,22 @@
+INSERT INTO quarto (numero, tipo, preco_diaria, q_hospedes, status)
+VALUES 
+(101, 'Standard (básico)', 250.50, 2, 'Reservado'),
+(102, 'Luxo', 450.00, 4, 'Disponível para reserva'),
+(103, 'Suíte', 600.00, 3, 'Reservado'),
+(104, 'Standard (básico)', 260.00, 2, 'Disponível para reserva'),
+(105, 'Luxo', 470.00, 4, 'Reservado'),
+(106, 'Suíte', 620.00, 3, 'Disponível para reserva'),
+(107, 'Standard (básico)', 255.00, 2, 'Reservado');
+
+SELECT 
+    q.numero AS quarto,
+    q.tipo AS tipo_quarto,
+    r.id_reserva,
+    h.nome AS hospede,
+    r.check_in,
+    r.check_out,
+    DATEDIFF(r.check_out, r.check_in) AS dias_ocupados
+FROM quarto q
+LEFT JOIN reserva r ON q.id_quarto = r.id_quarto
+LEFT JOIN hospede h ON r.id_hospede = h.id_hospede
+ORDER BY q.numero, r.check_in;

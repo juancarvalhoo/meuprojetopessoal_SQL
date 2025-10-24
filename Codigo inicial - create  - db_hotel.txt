@@ -1,0 +1,87 @@
+create table hospede(
+id_hospede INT not null AUTO_INCREMENT PRIMARY KEY,
+nome varchar(30) NOT NULL,
+sexo enum('M', 'F'),
+cpf varchar(14) NOT NULL,
+email varchar(100),
+telefone char(11),
+nacionalidade varchar(100) NOT NULL
+);
+
+create table quarto (
+id_quarto INT not null AUTO_INCREMENT PRIMARY KEY,
+numero INT NOT NULL,
+tipo varchar(150),
+preço_diaria decimal (10,2) NOT NULL,
+q_hospedes int,
+status varchar (50)
+);
+
+create table reserva(
+id_reserva INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+id_hospede INT NOT NULL,
+id_quarto INT NOT NULL,
+check_in date NOT NULL,
+check_out date NOT NULL,
+dias int,
+status varchar (50),
+
+FOREiGN KEY (id_hospede) references hospede(id_hospede),
+FOREiGN KEY (id_quarto) references quarto(id_quarto)
+);
+
+create table funcionario(
+id_funcionario INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+nome varchar(100) NOT NULL,
+cpf varchar(14) NOT NULL,
+cargo varchar(50) NOT NULL,
+email varchar(100),
+telefone char(11),
+data_contratacao DATE not null
+);
+
+create table servico_adicional(
+id_servico INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+id_funcionario INT NOT NULL,
+id_hospede INT NOT NULL,
+tipo_serviço varchar (100) not null,
+preco decimal (10,2) NOT NULL,
+dias int not null,
+q_pessoas int not null,
+
+FOREiGN KEY (id_funcionario) references funcionario(id_funcionario),
+FOREiGN KEY (id_hospede) references hospede(id_hospede)
+
+
+);
+
+create table pagamento (
+id_pagamento INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+id_reserva INT NOT NULL,
+id_servico INT, 
+valor decimal (10,2) NOT NULL,
+metodo varchar (50),
+data_pagamento date not null,
+status VARCHAR(20) DEFAULT 'Pendente', 
+
+FOREiGN KEY (id_reserva) references reserva(id_reserva),
+FOREiGN KEY (id_servico) references servico_adicional(id_servico)
+);
+
+create table avaliacao (
+id_avaliacao INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+id_reserva INT NOT NULL,
+nota DECIMAL(3,1) NOT NULL CHECK (nota BETWEEN 0 AND 10),
+comentario varchar (255) not null,
+data_hospedagem date not null,
+
+FOREiGN KEY (id_reserva) references reserva(id_reserva)
+
+);
+
+
+
+
+
+
+

@@ -1,0 +1,43 @@
+use db_hotel;
+
+insert into hospede
+(nome, sexo, cpf, email, telefone, nacionalidade)
+values
+('Emily Johnson', 'F', '11223344556', 'emily@gmail.com', '21944443333', 'Americana'),
+('Hiroshi Tanaka', 'M', '22334455667', 'hiroshi@gmail.com', '21933332222', 'Japonesa'),
+('Carlos Pereira', 'M', '11122233344', 'carlos@gmail.com', '21999998888', 'Brasileiro'),
+('Mohammed Ali', 'M', '44556677889', 'mohammed@gmail.com', '21911110000', 'Egípcia'),
+('Beatriz Lima', 'F', '44455566677', 'beatriz@gmail.com', '21966667777', 'Brasileira'),
+('Lucia Fernández', 'F', '55667788990', 'lucia@gmail.com', '21900009999', 'Espanhola');
+
+select * 
+from hospede;
+
+select * 
+from hospede 
+where sexo = 'M';
+
+select COUNT(*) 
+from hospede 
+WHERE sexo = 'F';
+
+SELECT *
+FROM hospede
+WHERE nacionalidade NOT IN ('Brasil', 'Brasileiro', 'Brasileira');
+
+
+select COUNT(*) as Hospedes_estrangeiros
+from hospede 
+where nacionalidade NOT IN ('Brasil', 'Brasileiro', 'Brasileira');
+
+select COUNT(*) as hospedes_brasileiros
+from hospede 
+where nacionalidade IN ('Brasil', 'Brasileiro', 'Brasileira');
+
+select nome
+from hospede 
+where nome  like '%A%';
+
+select nome
+from hospede 
+where nome  like '%a';

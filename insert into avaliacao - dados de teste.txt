@@ -1,0 +1,10 @@
+insert into avaliacao
+(id_reserva, nota, comentario, data_hospedagem)
+values 
+(20, 10, 'Muito Bom','2025-10-21'),
+(21, 9, 'Ótima estadia', '2025-10-22'),
+(22, 8, 'Bom atendimento', '2025-10-23'),
+(23, 7, 'Quarto confortável', '2025-10-24'),
+(24, 9, 'Excelente serviço', '2025-10-25'),
+(25, 6, 'Poderia melhorar', '2025-10-26'),
+(26, 10, 'Perfeito, voltaria!', '2025-10-27');

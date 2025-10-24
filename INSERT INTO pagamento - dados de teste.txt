@@ -1,0 +1,10 @@
+INSERT INTO pagamento 
+(id_reserva, id_servico, valor, metodo, data_pagamento, status)
+VALUES
+(20, 1, 200.00, 'PIX', '2025-10-25', 'Pendente'),
+(21, 2, 200.00, 'Cartao de debito', '2025-10-25', 'Concluido'),
+(22, 3, 300.00, 'PIX', '2025-10-26', 'Pendente'),
+(23, 4, 80.00, 'Cartao de credito', '2025-10-26', 'Concluido'),
+(24, 5, 120.00, 'PIX', '2025-10-27', 'Pendente'),
+(25, 1, 50.00, 'Cartao de credito', '2025-10-27', 'Concluido'),
+(26, 2, 200.00, 'PIX', '2025-10-28', 'Pendente');
