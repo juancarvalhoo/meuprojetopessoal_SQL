@@ -1,0 +1,81 @@
+import mysql.connector
+import pandas as pd
+from fpdf import FPDF
+
+conexao = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="SENHA",
+    database="NOME DO BANCO"
+)
+
+cursor = conexao.cursor(dictionary=True)
+
+query = """
+SELECT 
+    q.numero AS numero_quarto,
+    q.tipo AS tipo_quarto,
+    q.preço_diaria AS preco_diaria,
+    
+    COALESCE(h.nome, '---') AS hospede,
+    DATE_FORMAT(r.check_in, '%d/%m/%Y') AS check_in,
+    DATE_FORMAT(r.check_out, '%d/%m/%Y') AS check_out,
+    
+    CASE 
+        WHEN NOW() BETWEEN r.check_in AND r.check_out THEN '🟡 Ocupado'
+        WHEN r.check_out < NOW() AND r.id_reserva IS NOT NULL THEN '🔴 Finalizado'
+        ELSE '🟢 Disponível'
+    END AS status,
+
+    CASE 
+        WHEN r.id_reserva IS NOT NULL THEN 
+            DATEDIFF(r.check_out, r.check_in) * q.preço_diaria
+        ELSE 0
+    END AS valor_total,
+    
+    IFNULL(a.nota, '—') AS nota_avaliacao,
+    IFNULL(a.comentario, 'Sem comentário') AS comentario
+
+FROM quarto AS q
+LEFT JOIN reserva AS r ON q.id_quarto = r.id_quarto
+LEFT JOIN hospede AS h ON r.id_hospede = h.id_hospede
+LEFT JOIN avaliacao AS a ON r.id_reserva = a.id_reserva
+ORDER BY q.numero;
+"""
+
+cursor.execute(query)
+resultado = cursor.fetchall()
+
+df = pd.DataFrame(resultado)
+
+excel_path = "relatorio_quartos.xlsx"
+df.to_excel(excel_path, index=False)  # <- Sem XlsxWriter
+print(f"✅ Relatório Excel criado: {excel_path}")
+
+pdf = FPDF()
+pdf.add_page()
+pdf.set_font("Arial", 'B', 16)
+pdf.cell(0, 10, "Relatório de Quartos", ln=True, align="C")
+pdf.ln(5)
+
+pdf.set_font("Arial", size=12)
+for i, row in df.iterrows():
+
+    if "🟢" in row['status']:
+        pdf.set_text_color(0, 128, 0)
+    elif "🟡" in row['status']:
+        pdf.set_text_color(255, 165, 0)
+    else:
+        pdf.set_text_color(255, 0, 0)
+
+    linha = (f"Quarto {row['numero_quarto']} | {row['tipo_quarto']} | {row['status']} | "
+             f"R$ {row['valor_total']:,.2f} | Hóspede: {row['hospede']} | Nota: {row['nota_avaliacao']}")
+    pdf.multi_cell(0, 8, linha)
+    pdf.ln(1)
+
+pdf_path = "relatorio_quartos.pdf"
+pdf.output(pdf_path)
+print(f"✅ Relatório PDF criado: {pdf_path}")
+
+cursor.close()
+conexao.close()
